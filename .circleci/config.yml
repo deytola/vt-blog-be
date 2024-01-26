@@ -3,6 +3,8 @@ jobs:
   build:
     docker:
       - image: cimg/node:18.17.1
+        environment:
+          TEST_DATABASE_URL: postgresql://postgres@localhost/circle_test
       - image: cimg/postgres:14.0
         environment:
           POSTGRES_USER: postgres
@@ -17,6 +19,13 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
+      - run: sudo apt-get update
+               - run: sudo apt-get install postgresql-client
+               - run: whoami
+               - run: |
+                   psql \
+                   -d $TEST_DATABASE_URL \
+                   -c "CREATE DATABASE vt_blog WITH OWNER = postgres TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = 'libc' CONNECTION LIMIT = -1 IS_TEMPLATE = False;"
   test:
     docker:
       - image: cimg/node:18.17.1
