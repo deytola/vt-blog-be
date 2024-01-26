@@ -3,7 +3,9 @@ jobs:
   build:
     docker:
       - image: circleci/node:18.17.1
-      - image: postgres
+      - image: cimg/postgres:14.0
+        environment:
+          POSTGRES_USER: postgres
     steps:
       - checkout
       - restore_cache:
@@ -18,7 +20,9 @@ jobs:
   test:
     docker:
       - image: circleci/node:18.17.1
-      - image: postgres
+      - image: cimg/postgres:14.0
+        environment:
+          POSTGRES_USER: postgres
     steps:
       - checkout
       - restore_cache:
