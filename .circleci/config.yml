@@ -27,10 +27,10 @@ jobs:
 #          name: Create PostgreSQL database
 #          command: |
 #            psql -U postgres -c "CREATE DATABASE vt_blog;"
-      - run:
-          name: Grant privileges on the database
-          command: |
-            psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE vt_blog TO postgres;"
+#      - run:
+#          name: Grant privileges on the database
+#          command: |
+#            psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE vt_blog TO postgres;"
   test:
     docker:
       - image: cimg/node:18.17.1
