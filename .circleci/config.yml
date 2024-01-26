@@ -8,6 +8,7 @@ jobs:
       - image: cimg/postgres:14.0
         environment:
           POSTGRES_USER: postgres
+          POSTGRES_DB: vt_blog
     steps:
       - checkout
       - restore_cache:
@@ -20,21 +21,23 @@ jobs:
           paths:
             - node_modules
       - run:
-          command: sudo apt-get update
+          name: Install PostgreSQL client
+          command: sudo apt-get update && sudo apt-get install -y postgresql-client
+#      - run:
+#          name: Create PostgreSQL database
+#          command: |
+#            psql -U postgres -c "CREATE DATABASE vt_blog;"
       - run:
-          comand: sudo apt-get install postgresql-client
-      - run:
-          command: whoami
-      - run: |
-           psql \
-           -d $TEST_DATABASE_URL \
-           -c "CREATE DATABASE vt_blog WITH OWNER = postgres TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = 'libc' CONNECTION LIMIT = -1 IS_TEMPLATE = False;"
+          name: Grant privileges on the database
+          command: |
+            psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE vt_blog TO postgres;"
   test:
     docker:
       - image: cimg/node:18.17.1
       - image: cimg/postgres:14.0
         environment:
           POSTGRES_USER: postgres
+          POSTGRES_DB: vt_blog
     steps:
       - checkout
       - restore_cache:
