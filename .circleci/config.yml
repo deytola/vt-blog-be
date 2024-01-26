@@ -1,0 +1,128 @@
+version: 2.1
+jobs:
+  build:
+    # The primary container is an instance of the first image listed. The job's commands run in this container.
+    docker:
+      - image: circleci/node:14.15.4
+      # The secondary container is an instance of the second listed image which is run in a common network where ports exposed on the primary container are available on localhost.
+      - image: mongo
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install npm modules
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+  test:
+    docker:
+      - image: circleci/node:14.15.4
+      - image: mongo
+      - image: circleci/redis:6.2-rc3
+
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          command: npm run start:test
+          background: true
+      # wait for the server to start responding. We expect Bad Request 400 once it starts listening.
+      # so override the shell and have the last command be the : { null } command to force exit code 0.
+      - run:
+          shell: /bin/sh
+          command: |
+            wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 10 http://localhost:3000
+            :
+      - run:
+          command: npm run test:api
+  deploy_master_dev_to_development:
+    docker:
+      - image: circleci/node:14.15.4
+      - image: circleci/redis:6.2-rc3
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Deploy Master Dev to Development Environment on Heroku
+          command: |
+            npm run generate:docs
+            git config --global user.email "circle_ci_test@project.com"
+            git config --global user.name "CircleCI test"
+            git add .
+            git commit -m "Added docs files"
+            git push -f https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_DEV_APP_NAME.git master-dev:master
+  deploy_master_release_to_staging:
+    docker:
+      - image: circleci/node:14.15.4
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Deploy Master Release to Staging
+          command: |
+            npm run generate:docs
+            git config --global user.email "circle_ci_test@project.com"
+            git config --global user.name "CircleCI test"
+            git add .
+            git commit -m "Added docs files"
+            git push -f https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_STAGING_APP_NAME.git master-release:master
+  deploy_master_release_to_prod:
+    machine: true
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Deploy Master Release to Prod
+          command: |
+            git push -f https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_PROD_APP_NAME.git master-release:master
+
+
+workflows:
+  build-test-deploy:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy_master_dev_to_development:
+          requires:
+            - build
+            - test
+          filters:
+            branches:
+              only: master-dev
+      - hold-staging-deployment:
+          type: approval
+          requires:
+            - build
+            - test
+          filters:
+            branches:
+              only: master-release
+      - deploy_master_release_to_staging:
+          requires:
+            - hold-staging-deployment
+          filters:
+            branches:
+              only: master-release
+      - hold-prod-deployment:
+          type: approval
+          requires:
+            - build
+            - test
+          filters:
+            branches:
+              only: master-release
+      - deploy_master_release_to_prod:
+          requires:
+            - hold-prod-deployment
+          filters:
+            branches:
+              only: master-release
