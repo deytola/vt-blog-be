@@ -12,8 +12,8 @@ async function bootstrap() {
     new ClassSerializerInterceptor(app.get(Reflector))
   );
   const config = new DocumentBuilder()
-  .setTitle('URL Shortener')
-  .setDescription('A URL Shortener Microservice')
+  .setTitle('VT Blog')
+  .setDescription('A Blogs Microservice')
   .setVersion('1.0')
   .addBearerAuth()
   .addSecurityRequirements('bearer')

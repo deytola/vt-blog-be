@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Role } from './role.entity';
+import { Blog } from '../../blogs/entities/blog.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -49,9 +49,6 @@ export class User extends BaseEntity {
   })
   password: string;
 
-  // @OneToMany(() => Url, (url) => url.user, { eager: true })
-  // urls: Url[];
-
-  @OneToMany(() => Role, (role) => role.user, { eager: false })
-  roles: Role[];
+  @OneToMany(() => Blog, blog => blog.author, { eager: false })
+  blogs: Blog[];
 }

@@ -1,8 +1,8 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateUserDTO } from '../DTOs/CreateUser.dto';
-import { UsersService } from '../services/users/users.service';
+import { CreateUserDTO } from '../../DTOs/CreateUser.dto';
+import { UsersService } from '../../services/users/users.service';
 
 @ApiTags('Users')
 @Controller('users')
@@ -111,7 +111,7 @@ export class UsersController {
       },
     },
   })
-  @Post()
+  @Post('signup')
   @HttpCode(201)
   async createUser(@Body() createUserDto: CreateUserDTO) {
     const hashedPassword: string = await bcrypt.hash(

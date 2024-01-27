@@ -13,9 +13,4 @@ export class CreateUserDTO {
   @IsNotEmpty()
   password: string;
 
-  lastLoginDate?: Date;
-
-  createdAt?: Date;
-
-  updatedAt?: Date;
 }

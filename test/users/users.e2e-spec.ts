@@ -17,7 +17,7 @@ describe('UserController (e2e)', () => {
 
   it('should create a user', () => {
     return request(app.getHttpServer())
-      .post('/users')
+      .post('/users/signup')
       .send({
         firstName: 'Ade',
         lastName: 'Tola',
