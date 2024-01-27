@@ -271,9 +271,10 @@ export class BlogsController {
   async getBlogs(
     @Request() req,
     @Query() paginationDto: PaginationDto,
-    @Query('status') status: BLOG_STATUS
+    @Query('status') status: BLOG_STATUS,
+    @Query('search') searchQuery: string
   ): Promise<{ blogs: Blog[]; totalPages: number }> {
-    return await this.blogsService.findAll(status, paginationDto);
+    return await this.blogsService.findAll(status, paginationDto, searchQuery);
   }
 
   @ApiOperation({ summary: 'Fetch a blog by slug' })

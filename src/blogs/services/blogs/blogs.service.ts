@@ -23,32 +23,44 @@ export class BlogsService {
     blog.content = createBlogDto.content;
     blog.image = createBlogDto.image;
     blog.category = createBlogDto.category;
-    blog.author = await this.userRepository.findOneBy({id: createBlogDto.authorId });
+    blog.author = await this.userRepository.findOneBy({ id: createBlogDto.authorId });
     return await this.blogRepository.save(blog);
   }
 
-
-  async findAll(status: BLOG_STATUS, paginationDto: PaginationDto): Promise<{ blogs: Blog[]; totalPages: number }> {
+  async findAll(
+    status: BLOG_STATUS,
+    paginationDto: PaginationDto,
+    searchQuery?: string,
+  ): Promise<{ blogs: Blog[]; totalPages: number }> {
     const { page } = paginationDto;
     const limit = 6;
     const skip = (page - 1) * limit || 0;
 
-    let queryBuilder = this.blogRepository.createQueryBuilder('blog').leftJoinAndSelect('blog.author', 'author');
+    let queryBuilder = this.blogRepository.createQueryBuilder('blog')
+      .leftJoinAndSelect('blog.author', 'author')
+      .where('1=1');
 
     switch (status) {
       case BLOG_STATUS.LIVE:
-        queryBuilder = queryBuilder.where('blog.published_at IS NOT NULL');
+        queryBuilder = queryBuilder.andWhere('blog.published_at IS NOT NULL');
         break;
       case BLOG_STATUS.DRAFT:
-        queryBuilder = queryBuilder.where('blog.published_at IS NULL');
+        queryBuilder = queryBuilder.andWhere('blog.published_at IS NULL');
         break;
       default:
         break;
     }
 
+    if (searchQuery) {
+      queryBuilder = queryBuilder.andWhere('blog.title LIKE :searchQuery', { searchQuery: `%${searchQuery}%` });
+    }
+
     const totalCount = await queryBuilder.getCount();
 
-    queryBuilder = queryBuilder.skip(skip).take(limit);
+    queryBuilder = queryBuilder
+      .orderBy('blog.published_at', 'DESC')
+      .skip(skip)
+      .take(limit);
 
     const blogs = await queryBuilder.getMany();
 
@@ -57,7 +69,7 @@ export class BlogsService {
     return { blogs, totalPages };
   }
 
-async findOne(slug: string): Promise<Blog> {
+  async findOne(slug: string): Promise<Blog> {
     const blog: Blog = await this.blogRepository.findOne({ where: { slug }, relations: ['author'] });
     if (!blog) {
       throw new NotFoundException('Blog not found');
