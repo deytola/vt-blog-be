@@ -31,6 +31,7 @@ export class BlogsService {
     page: number = 1,
     searchQuery?: string,
   ): Promise<{ blogs: Blog[]; totalPages: number }> {
+    page = (page && page < 1) ? 1 : page
     const MAX_BLOG_PER_PAGE = 6
     const limit = MAX_BLOG_PER_PAGE;
     const skip = (page - 1) * limit || 0;

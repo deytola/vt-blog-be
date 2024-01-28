@@ -2,7 +2,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import { Module } from '@nestjs/common';
-import { DataSource } from 'typeorm';
 
 
 @Module({
@@ -18,7 +17,11 @@ import { DataSource } from 'typeorm';
                 password: configService.get('POSTGRES_PASSWORD'),
                 database: configService.get('POSTGRES_DATABASE'),
                 entities: [join(__dirname, '../', '**', '*.entity.{ts,js}')],
-                synchronize: true,
+                migrations: [join(__dirname, '../', 'migrations', '*.{ts,js}')],
+                cli: {
+                    migrationsDir: 'src/migrations',
+                },
+                synchronize: true, //false in prod
                 keepConnectionAlive: true
             }),
         })

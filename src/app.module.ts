@@ -1,9 +1,13 @@
-import { Module } from '@nestjs/common';
+import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { AuthorizationModule } from './authorization/authorization.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { BlogsModule } from './blogs/blogs.module';
+import { SeedingService } from './blogs/services/blogs/seeding.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Blog } from './blogs/entities/blog.entity';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -11,9 +15,18 @@ import { BlogsModule } from './blogs/blogs.module';
     ConfigModule.forRoot({}),
     DatabaseModule,
     UsersModule,
-    BlogsModule
+    BlogsModule,
+    TypeOrmModule.forFeature([Blog]),
   ],
   controllers: [],
-  providers: [],
+  providers: [SeedingService],
 })
-export class AppModule {}
+export class AppModule implements OnApplicationBootstrap {
+  constructor(private readonly seedingService: SeedingService) {
+  }
+
+  async onApplicationBootstrap() {
+    await this.seedingService.seedBlogs();
+    console.log('Blogs seeded successfully.');
+  }
+}

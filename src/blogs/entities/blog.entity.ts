@@ -45,8 +45,8 @@ export class Blog extends BaseEntity {
   })
   category: BlogCategory;
 
-  @ManyToOne(() => User, user => user.blogs)
-  author: User;
+  @ManyToOne(() => User, user => user.blogs, { nullable: true })
+  author: User | null;
 
   @Column({
     nullable: true
@@ -64,6 +64,6 @@ export class Blog extends BaseEntity {
 
   @BeforeInsert()
   generateSlug() {
-    this.slug = slugify(this.title, this.author.id);
+    this.slug = slugify(this.title);
   }
 }
