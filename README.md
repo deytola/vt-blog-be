@@ -21,6 +21,7 @@ A Microservice developed using [Nest](https://github.com/nestjs/nest) framework 
 - [Swagger](https://swagger.io/)
 - [Docker](https://www.docker.com/)
 - [CircleCI](https://circleci.com/)
+- [AWS S3](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/)
 
 ## Testing Tools
 

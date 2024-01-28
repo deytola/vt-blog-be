@@ -1,11 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { CreateBlogDTO } from '../../DTOs/createblog.dto';
 import { Blog } from '../../entities/blog.entity';
 import { User } from '../../../users/entities/user.entity';
 import { BLOG_STATUS } from '../../constants/blogs.constants';
-import { PaginationDto } from '../../DTOs/pagination.dto';
 
 @Injectable()
 export class BlogsService {
@@ -29,11 +28,11 @@ export class BlogsService {
 
   async findAll(
     status: BLOG_STATUS,
-    paginationDto: PaginationDto,
+    page: number = 1,
     searchQuery?: string,
   ): Promise<{ blogs: Blog[]; totalPages: number }> {
-    const { page } = paginationDto;
-    const limit = 6;
+    const MAX_BLOG_PER_PAGE = 6
+    const limit = MAX_BLOG_PER_PAGE;
     const skip = (page - 1) * limit || 0;
 
     let queryBuilder = this.blogRepository.createQueryBuilder('blog')
@@ -52,7 +51,7 @@ export class BlogsService {
     }
 
     if (searchQuery) {
-      queryBuilder = queryBuilder.andWhere('blog.title LIKE :searchQuery', { searchQuery: `%${searchQuery}%` });
+      queryBuilder = queryBuilder.andWhere('LOWER(blog.title) LIKE LOWER(:searchQuery)', { searchQuery: `%${searchQuery}%` });
     }
 
     const totalCount = await queryBuilder.getCount();
@@ -69,12 +68,21 @@ export class BlogsService {
     return { blogs, totalPages };
   }
 
-  async findOne(slug: string): Promise<Blog> {
+
+  async findOne(slug: string): Promise<{ blog: Blog; relatedBlogs: Blog[] }> {
     const blog: Blog = await this.blogRepository.findOne({ where: { slug }, relations: ['author'] });
+
     if (!blog) {
       throw new NotFoundException('Blog not found');
     }
-    return blog;
+
+    const relatedBlogs: Blog[] = await this.blogRepository.find({
+      where: { published_at: Not(IsNull()), id: Not(blog.id) },
+      order: { published_at: 'DESC' },
+      take: 4,
+    });
+
+    return { blog, relatedBlogs };
   }
 
   async remove(slug: string): Promise<void> {

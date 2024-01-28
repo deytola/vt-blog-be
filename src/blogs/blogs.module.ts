@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Blog } from './entities/blog.entity';
 import { User } from '../users/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
+import { ImagesService } from './services/images/images.service';
 
 
 @Module({
@@ -13,6 +14,6 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot()
   ],
   controllers: [BlogsController],
-  providers: [BlogsService]
+  providers: [BlogsService, ImagesService]
 })
 export class BlogsModule {}
