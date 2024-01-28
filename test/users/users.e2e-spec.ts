@@ -19,7 +19,7 @@ describe('UserController (e2e)', () => {
         lastName,
         email,
         password,
-      })
+      });
     expect(response.status).toBe(201);
     expect(response.body).toBeDefined();
     expect(response.body.token).toBeDefined();
@@ -36,7 +36,7 @@ describe('UserController (e2e)', () => {
       .send({
         email,
         password,
-      })
+      });
     expect(response.status).toBe(200);
     expect(response.body).toBeDefined();
     expect(response.body.token).toBeDefined();

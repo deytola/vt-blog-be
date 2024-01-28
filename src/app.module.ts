@@ -25,7 +25,10 @@ export class AppModule implements OnApplicationBootstrap {
   constructor(private readonly seedingService: SeedingService) {}
 
   async onApplicationBootstrap() {
-    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.NODE_ENV === 'test'
+    ) {
       await this.seedingService.seedBlogs();
       console.log('Blogs seeded successfully.');
     }

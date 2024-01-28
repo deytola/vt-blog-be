@@ -17,7 +17,7 @@ export class SeedingService {
 
   async seedBlogs() {
     const authorIds: User[] = await this.seedUsers();
-    for(let i = 0; i < NUMBER_OF_BLOGS_TO_SEED; i++){
+    for (let i = 0; i < NUMBER_OF_BLOGS_TO_SEED; i++) {
       const blogToSeed: Blog = new Blog();
       Object.assign(blogToSeed, {
         title: faker.lorem.words(3),
@@ -25,14 +25,14 @@ export class SeedingService {
         image: faker.image.image(500, 500, true),
         published_at: new Date().toISOString(),
         author: this.randomise(authorIds),
-        category: this.randomise(Object.values(BlogCategory))
-      })
+        category: this.randomise(Object.values(BlogCategory)),
+      });
       await this.blogRepository.save(blogToSeed);
     }
   }
 
   async seedUsers() {
-    const ids = []
+    const ids = [];
     for (let i = 0; i < 5; i++) {
       const userToSeed: User = new User();
       Object.assign(userToSeed, {
@@ -40,8 +40,8 @@ export class SeedingService {
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         email: faker.internet.email(),
-        password: faker.internet.password()
-      })
+        password: faker.internet.password(),
+      });
       const savedUser: User = await this.userRepository.save(userToSeed);
       ids.push(savedUser.id);
     }
@@ -51,5 +51,5 @@ export class SeedingService {
   randomise = (options: any[]): string[] => {
     const randomIndex: number = Math.floor(Math.random() * options.length);
     return options[randomIndex];
-  }
+  };
 }
