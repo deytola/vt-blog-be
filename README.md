@@ -43,5 +43,13 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Testing the app
+
+```bash
+# development mode
+$ npm run test:e2e
+
+```
+
 ## Documentation
 After successfully running the server, the api documentation can be accessed via a browser at `http://localhost:3001/docs`

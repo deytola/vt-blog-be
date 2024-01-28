@@ -4,7 +4,7 @@ export class UserLoginDTO {
   @IsEmail()
   @IsNotEmpty()
   email: string;
-  
+
   @IsNotEmpty()
   password: string;
 }

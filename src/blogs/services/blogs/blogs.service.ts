@@ -13,8 +13,7 @@ export class BlogsService {
     private readonly blogRepository: Repository<Blog>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {
-  }
+  ) {}
 
   async create(createBlogDto: CreateBlogDTO): Promise<Blog> {
     const blog = new Blog();
@@ -22,7 +21,9 @@ export class BlogsService {
     blog.content = createBlogDto.content;
     blog.image = createBlogDto.image;
     blog.category = createBlogDto.category;
-    blog.author = await this.userRepository.findOneBy({ id: createBlogDto.authorId });
+    blog.author = await this.userRepository.findOneBy({
+      id: createBlogDto.authorId,
+    });
     return await this.blogRepository.save(blog);
   }
 
@@ -31,12 +32,13 @@ export class BlogsService {
     page: number = 1,
     searchQuery?: string,
   ): Promise<{ blogs: Blog[]; totalPages: number }> {
-    page = (page && page < 1) ? 1 : page
-    const MAX_BLOG_PER_PAGE = 6
+    page = page && page < 1 ? 1 : page;
+    const MAX_BLOG_PER_PAGE = 6;
     const limit = MAX_BLOG_PER_PAGE;
     const skip = (page - 1) * limit || 0;
 
-    let queryBuilder = this.blogRepository.createQueryBuilder('blog')
+    let queryBuilder = this.blogRepository
+      .createQueryBuilder('blog')
       .leftJoinAndSelect('blog.author', 'author')
       .where('1=1');
 
@@ -52,7 +54,10 @@ export class BlogsService {
     }
 
     if (searchQuery) {
-      queryBuilder = queryBuilder.andWhere('LOWER(blog.title) LIKE LOWER(:searchQuery)', { searchQuery: `%${searchQuery}%` });
+      queryBuilder = queryBuilder.andWhere(
+        'LOWER(blog.title) LIKE LOWER(:searchQuery)',
+        { searchQuery: `%${searchQuery}%` },
+      );
     }
 
     const totalCount = await queryBuilder.getCount();
@@ -69,9 +74,11 @@ export class BlogsService {
     return { blogs, totalPages };
   }
 
-
   async findOne(slug: string): Promise<{ blog: Blog; relatedBlogs: Blog[] }> {
-    const blog: Blog = await this.blogRepository.findOne({ where: { slug }, relations: ['author'] });
+    const blog: Blog = await this.blogRepository.findOne({
+      where: { slug },
+      relations: ['author'],
+    });
 
     if (!blog) {
       throw new NotFoundException('Blog not found');
@@ -103,9 +110,4 @@ export class BlogsService {
     Object.assign(blogToUpdate, updatePayload);
     return await this.blogRepository.save(blogToUpdate);
   }
-
 }
-
-
-
-

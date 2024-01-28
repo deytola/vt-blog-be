@@ -16,17 +16,18 @@ import { User } from './users/entities/user.entity';
     DatabaseModule,
     UsersModule,
     BlogsModule,
-    TypeOrmModule.forFeature([Blog]),
+    TypeOrmModule.forFeature([Blog, User]),
   ],
   controllers: [],
   providers: [SeedingService],
 })
 export class AppModule implements OnApplicationBootstrap {
-  constructor(private readonly seedingService: SeedingService) {
-  }
+  constructor(private readonly seedingService: SeedingService) {}
 
   async onApplicationBootstrap() {
-    await this.seedingService.seedBlogs();
-    console.log('Blogs seeded successfully.');
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+      await this.seedingService.seedBlogs();
+      console.log('Blogs seeded successfully.');
+    }
   }
 }

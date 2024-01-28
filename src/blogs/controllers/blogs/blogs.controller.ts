@@ -1,5 +1,24 @@
-import { Body, Request, Controller, HttpCode, Post, UseGuards, Get, Param, Delete, Patch, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Request,
+  Controller,
+  HttpCode,
+  Post,
+  UseGuards,
+  Get,
+  Param,
+  Delete,
+  Patch,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { BlogsService } from '../../services/blogs/blogs.service';
 import { CreateBlogDTO } from '../../DTOs/createblog.dto';
 import { Blog } from '../../entities/blog.entity';
@@ -13,9 +32,8 @@ import { PresignedPost } from '@aws-sdk/s3-presigned-post';
 export class BlogsController {
   constructor(
     private readonly blogsService: BlogsService,
-    private readonly imagesService: ImagesService
-  ) {
-  }
+    private readonly imagesService: ImagesService,
+  ) {}
 
   @ApiOperation({ summary: 'Create a blog' })
   @ApiBearerAuth()
@@ -27,12 +45,12 @@ export class BlogsController {
         title: {
           type: 'string',
           example: 'A Song of Ice and Fire',
-          description: 'author\'s blog title',
+          description: "author's blog title",
         },
         slug: {
           type: 'string',
           example: 'a-song-of-ice-and-fire',
-          description: 'Blog\'s unique slug',
+          description: "Blog's unique slug",
         },
         image: {
           type: 'string',
@@ -41,13 +59,15 @@ export class BlogsController {
         },
         content: {
           type: 'string',
-          example: 'A Song of Ice and Fire is a series of epic fantasy novels by the American novelist and screenwriter George R. R. Martin. He began writing the first volume...',
-          description: 'Blog\'s content',
+          example:
+            'A Song of Ice and Fire is a series of epic fantasy novels by the American novelist and screenwriter George R. R. Martin. He began writing the first volume...',
+          description: "Blog's content",
         },
         category: {
           type: 'string',
           example: 'General',
-          description: 'Category of the blog. Should be one of: \'General\', \'Adventure\', \'Travel\', \'Fashion\' or \'Technology\'',
+          description:
+            "Category of the blog. Should be one of: 'General', 'Adventure', 'Travel', 'Fashion' or 'Technology'",
         },
       },
     },
@@ -64,17 +84,17 @@ export class BlogsController {
             id: {
               type: 'integer',
               example: 1,
-              description: 'blog\'s unique identifier',
+              description: "blog's unique identifier",
             },
             title: {
               type: 'string',
               example: 'A Song of Ice and Fire',
-              description: 'Blog\'s title',
+              description: "Blog's title",
             },
             slug: {
               type: 'string',
               example: 'a-song-of-ice-and-fire',
-              description: 'blog\'s unique slug',
+              description: "blog's unique slug",
             },
             image: {
               type: 'string',
@@ -83,13 +103,15 @@ export class BlogsController {
             },
             content: {
               type: 'string',
-              example: 'A Song of Ice and Fire is a series of epic fantasy novels by the American novelist and screenwriter George R. R. Martin. He began writing the first volume...',
-              description: 'Blog\'s content',
+              example:
+                'A Song of Ice and Fire is a series of epic fantasy novels by the American novelist and screenwriter George R. R. Martin. He began writing the first volume...',
+              description: "Blog's content",
             },
             category: {
               type: 'string',
               example: 'General',
-              description: 'Category of the blog. Should be one of: \'General\', \'Adventure\', \'Travel\', \'Fashion\' or \'Technology\'',
+              description:
+                "Category of the blog. Should be one of: 'General', 'Adventure', 'Travel', 'Fashion' or 'Technology'",
             },
             author: {
               type: 'object',
@@ -97,39 +119,39 @@ export class BlogsController {
                 id: {
                   type: 'integer',
                   example: 1,
-                  description: 'user\'s unique identifier',
+                  description: "user's unique identifier",
                 },
                 firstName: {
                   type: 'string',
                   example: 'Bruce',
-                  description: 'user\'s given name',
+                  description: "user's given name",
                 },
                 lastName: {
                   type: 'string',
                   example: 'Wayne',
-                  description: 'user\'s family name',
+                  description: "user's family name",
                 },
                 email: {
                   type: 'string',
                   example: 'ade@test.test',
-                  description: 'user\'s unique email',
+                  description: "user's unique email",
                 },
                 createdAt: {
                   type: 'date',
                   example: '2023-11-302023-11-30 10:45:06.883885',
-                  description: 'user\'s account creation date',
+                  description: "user's account creation date",
                 },
                 updatedAt: {
                   type: 'date',
                   example: '2023-11-302023-11-30 10:45:06.883885',
-                  description: 'user\'s account latest updated date',
+                  description: "user's account latest updated date",
                 },
               },
             },
             created_at: {
               type: 'date',
               example: '2023-11-302023-11-30 10:45:06.883885',
-              description: 'blog\'s creation date',
+              description: "blog's creation date",
             },
             updated_at: {
               type: 'date',
@@ -139,12 +161,12 @@ export class BlogsController {
             published_at: {
               type: 'date',
               example: '2023-11-302023-11-30 10:45:06.883885',
-              description: 'blog\'s publish date',
+              description: "blog's publish date",
             },
             deleted_at: {
               type: 'date',
               example: '2023-11-302023-11-30 10:45:06.883885',
-              description: 'blog\'s deletion date',
+              description: "blog's deletion date",
             },
           },
         },
@@ -158,7 +180,7 @@ export class BlogsController {
     @Request() req,
     @Body() createBlogDto: CreateBlogDTO,
   ): Promise<{ blog: Blog }> {
-    const { id } = req.user;
+    const id = req.user?.id;
     const createdBlog: Blog = await this.blogsService.create(
       Object.assign(createBlogDto, { authorId: id }),
     );
@@ -168,9 +190,25 @@ export class BlogsController {
   @ApiOperation({ summary: 'Fetch blogs' })
   @ApiBearerAuth()
   @ApiTags('Blogs')
-  @ApiQuery({ name: 'status', description: 'Publish status of the blogs to fetch', enum: BLOG_STATUS, required: false })
-  @ApiQuery({ name: 'page', description: 'Page number', required: false, type: 'integer', example: 1 })
-  @ApiQuery({ name: 'search', description: 'Search query', required: false, type: 'string' })
+  @ApiQuery({
+    name: 'status',
+    description: 'Publish status of the blogs to fetch',
+    enum: BLOG_STATUS,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    description: 'Page number',
+    required: false,
+    type: 'integer',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'search',
+    description: 'Search query',
+    required: false,
+    type: 'string',
+  })
   @ApiResponse({
     status: 200,
     description: 'blogs fetched successfully',
@@ -184,17 +222,17 @@ export class BlogsController {
               id: {
                 type: 'integer',
                 example: 1,
-                description: 'blog\'s unique identifier',
+                description: "blog's unique identifier",
               },
               title: {
                 type: 'string',
                 example: 'A Song of Ice and Fire',
-                description: 'Blog\'s title',
+                description: "Blog's title",
               },
               slug: {
                 type: 'string',
                 example: 'a-song-of-ice-and-fire',
-                description: 'blog\'s unique slug',
+                description: "blog's unique slug",
               },
               image: {
                 type: 'string',
@@ -203,13 +241,15 @@ export class BlogsController {
               },
               content: {
                 type: 'string',
-                example: 'A Song of Ice and Fire is a series of epic fantasy novels by the American novelist and screenwriter George R. R. Martin. He began writing the first volume...',
-                description: 'Blog\'s content',
+                example:
+                  'A Song of Ice and Fire is a series of epic fantasy novels by the American novelist and screenwriter George R. R. Martin. He began writing the first volume...',
+                description: "Blog's content",
               },
               category: {
                 type: 'string',
                 example: 'General',
-                description: 'Category of the blog. Should be one of: \'General\', \'Adventure\', \'Travel\', \'Fashion\' or \'Technology\'',
+                description:
+                  "Category of the blog. Should be one of: 'General', 'Adventure', 'Travel', 'Fashion' or 'Technology'",
               },
               author: {
                 type: 'object',
@@ -217,39 +257,39 @@ export class BlogsController {
                   id: {
                     type: 'integer',
                     example: 1,
-                    description: 'user\'s unique identifier',
+                    description: "user's unique identifier",
                   },
                   firstName: {
                     type: 'string',
                     example: 'Bruce',
-                    description: 'user\'s given name',
+                    description: "user's given name",
                   },
                   lastName: {
                     type: 'string',
                     example: 'Wayne',
-                    description: 'user\'s family name',
+                    description: "user's family name",
                   },
                   email: {
                     type: 'string',
                     example: 'ade@test.test',
-                    description: 'user\'s unique email',
+                    description: "user's unique email",
                   },
                   createdAt: {
                     type: 'date',
                     example: '2023-11-302023-11-30 10:45:06.883885',
-                    description: 'user\'s account creation date',
+                    description: "user's account creation date",
                   },
                   updatedAt: {
                     type: 'date',
                     example: '2023-11-302023-11-30 10:45:06.883885',
-                    description: 'user\'s account latest updated date',
+                    description: "user's account latest updated date",
                   },
                 },
               },
               created_at: {
                 type: 'date',
                 example: '2023-11-302023-11-30 10:45:06.883885',
-                description: 'blog\'s creation date',
+                description: "blog's creation date",
               },
               updated_at: {
                 type: 'date',
@@ -259,12 +299,12 @@ export class BlogsController {
               published_at: {
                 type: 'date',
                 example: '2023-11-302023-11-30 10:45:06.883885',
-                description: 'blog\'s publish date',
+                description: "blog's publish date",
               },
               deleted_at: {
                 type: 'date',
                 example: '2023-11-302023-11-30 10:45:06.883885',
-                description: 'blog\'s deletion date',
+                description: "blog's deletion date",
               },
             },
           },
@@ -283,7 +323,7 @@ export class BlogsController {
     @Request() req,
     @Query('page') page: number,
     @Query('status') status: BLOG_STATUS,
-    @Query('search') searchQuery: string
+    @Query('search') searchQuery: string,
   ): Promise<{ blogs: Blog[]; totalPages: number }> {
     return await this.blogsService.findAll(status, page, searchQuery);
   }
@@ -303,17 +343,17 @@ export class BlogsController {
             id: {
               type: 'integer',
               example: 1,
-              description: 'blog\'s unique identifier',
+              description: "blog's unique identifier",
             },
             title: {
               type: 'string',
               example: 'A Song of Ice and Fire',
-              description: 'Blog\'s title',
+              description: "Blog's title",
             },
             slug: {
               type: 'string',
               example: 'a-song-of-ice-and-fire',
-              description: 'blog\'s unique slug',
+              description: "blog's unique slug",
             },
             image: {
               type: 'string',
@@ -322,13 +362,15 @@ export class BlogsController {
             },
             content: {
               type: 'string',
-              example: 'A Song of Ice and Fire is a series of epic fantasy novels by the American novelist and screenwriter George R. R. Martin. He began writing the first volume...',
-              description: 'Blog\'s content',
+              example:
+                'A Song of Ice and Fire is a series of epic fantasy novels by the American novelist and screenwriter George R. R. Martin. He began writing the first volume...',
+              description: "Blog's content",
             },
             category: {
               type: 'string',
               example: 'General',
-              description: 'Category of the blog. Should be one of: \'General\', \'Adventure\', \'Travel\', \'Fashion\' or \'Technology\'',
+              description:
+                "Category of the blog. Should be one of: 'General', 'Adventure', 'Travel', 'Fashion' or 'Technology'",
             },
             author: {
               type: 'object',
@@ -336,39 +378,39 @@ export class BlogsController {
                 id: {
                   type: 'integer',
                   example: 1,
-                  description: 'user\'s unique identifier',
+                  description: "user's unique identifier",
                 },
                 firstName: {
                   type: 'string',
                   example: 'Bruce',
-                  description: 'user\'s given name',
+                  description: "user's given name",
                 },
                 lastName: {
                   type: 'string',
                   example: 'Wayne',
-                  description: 'user\'s family name',
+                  description: "user's family name",
                 },
                 email: {
                   type: 'string',
                   example: 'ade@test.test',
-                  description: 'user\'s unique email',
+                  description: "user's unique email",
                 },
                 createdAt: {
                   type: 'date',
                   example: '2023-11-302023-11-30 10:45:06.883885',
-                  description: 'user\'s account creation date',
+                  description: "user's account creation date",
                 },
                 updatedAt: {
                   type: 'date',
                   example: '2023-11-302023-11-30 10:45:06.883885',
-                  description: 'user\'s account latest updated date',
+                  description: "user's account latest updated date",
                 },
               },
             },
             created_at: {
               type: 'date',
               example: '2023-11-302023-11-30 10:45:06.883885',
-              description: 'blog\'s creation date',
+              description: "blog's creation date",
             },
             updated_at: {
               type: 'date',
@@ -378,12 +420,12 @@ export class BlogsController {
             published_at: {
               type: 'date',
               example: '2023-11-302023-11-30 10:45:06.883885',
-              description: 'blog\'s publish date',
+              description: "blog's publish date",
             },
             deleted_at: {
               type: 'date',
               example: '2023-11-302023-11-30 10:45:06.883885',
-              description: 'blog\'s deletion date',
+              description: "blog's deletion date",
             },
           },
         },
@@ -394,17 +436,17 @@ export class BlogsController {
               id: {
                 type: 'integer',
                 example: 4,
-                description: 'blog\'s unique identifier',
+                description: "blog's unique identifier",
               },
               title: {
                 type: 'string',
                 example: 'A Dance with Dragons',
-                description: 'Blog\'s title',
+                description: "Blog's title",
               },
               slug: {
                 type: 'string',
                 example: 'a-dance-with-dragons',
-                description: 'blog\'s unique slug',
+                description: "blog's unique slug",
               },
               image: {
                 type: 'string',
@@ -413,13 +455,15 @@ export class BlogsController {
               },
               content: {
                 type: 'string',
-                example: 'A Song of Ice and Fire is a series of epic fantasy novels by the American novelist and screenwriter George R. R. Martin. He began writing the first volume...',
-                description: 'Blog\'s content',
+                example:
+                  'A Song of Ice and Fire is a series of epic fantasy novels by the American novelist and screenwriter George R. R. Martin. He began writing the first volume...',
+                description: "Blog's content",
               },
               category: {
                 type: 'string',
                 example: 'General',
-                description: 'Category of the blog. Should be one of: \'General\', \'Adventure\', \'Travel\', \'Fashion\' or \'Technology\'',
+                description:
+                  "Category of the blog. Should be one of: 'General', 'Adventure', 'Travel', 'Fashion' or 'Technology'",
               },
               author: {
                 type: 'object',
@@ -427,39 +471,39 @@ export class BlogsController {
                   id: {
                     type: 'integer',
                     example: 1,
-                    description: 'user\'s unique identifier',
+                    description: "user's unique identifier",
                   },
                   firstName: {
                     type: 'string',
                     example: 'Bruce',
-                    description: 'user\'s given name',
+                    description: "user's given name",
                   },
                   lastName: {
                     type: 'string',
                     example: 'Wayne',
-                    description: 'user\'s family name',
+                    description: "user's family name",
                   },
                   email: {
                     type: 'string',
                     example: 'ade@test.test',
-                    description: 'user\'s unique email',
+                    description: "user's unique email",
                   },
                   createdAt: {
                     type: 'date',
                     example: '2023-11-302023-11-30 10:45:06.883885',
-                    description: 'user\'s account creation date',
+                    description: "user's account creation date",
                   },
                   updatedAt: {
                     type: 'date',
                     example: '2023-11-302023-11-30 10:45:06.883885',
-                    description: 'user\'s account latest updated date',
+                    description: "user's account latest updated date",
                   },
                 },
               },
               created_at: {
                 type: 'date',
                 example: '2023-11-302023-11-30 10:45:06.883885',
-                description: 'blog\'s creation date',
+                description: "blog's creation date",
               },
               updated_at: {
                 type: 'date',
@@ -469,15 +513,15 @@ export class BlogsController {
               published_at: {
                 type: 'date',
                 example: '2023-11-302023-11-30 10:45:06.883885',
-                description: 'blog\'s publish date',
+                description: "blog's publish date",
               },
               deleted_at: {
                 type: 'date',
                 example: '2023-11-302023-11-30 10:45:06.883885',
-                description: 'blog\'s deletion date',
+                description: "blog's deletion date",
               },
             },
-          }
+          },
         },
       },
     },
@@ -486,7 +530,7 @@ export class BlogsController {
   @HttpCode(200)
   async getBlog(
     @Param('slug') slug: string,
-  ): Promise<{ blog: Blog, relatedBlogs: Blog[] }> {
+  ): Promise<{ blog: Blog; relatedBlogs: Blog[] }> {
     return await this.blogsService.findOne(slug);
   }
 
@@ -500,7 +544,7 @@ export class BlogsController {
         title: {
           type: 'string',
           example: 'A Dance with Dragons',
-          description: 'author\'s updated blog title',
+          description: "author's updated blog title",
         },
         image: {
           type: 'string',
@@ -509,16 +553,18 @@ export class BlogsController {
         },
         content: {
           type: 'string',
-          example: 'A Dance with Dragons is the fifth novel of seven planned in the epic fantasy series A Song of Ice and Fire by American author George R. R. Martin.',
-          description: 'Blog\'s content',
+          example:
+            'A Dance with Dragons is the fifth novel of seven planned in the epic fantasy series A Song of Ice and Fire by American author George R. R. Martin.',
+          description: "Blog's content",
         },
         category: {
           type: 'string',
           example: 'Adventure',
-          description: 'Category of the blog. Should be one of: \'General\', \'Adventure\', \'Travel\', \'Fashion\' or \'Technology\'',
+          description:
+            "Category of the blog. Should be one of: 'General', 'Adventure', 'Travel', 'Fashion' or 'Technology'",
         },
       },
-    }
+    },
   })
   @ApiResponse({
     status: 200,
@@ -532,17 +578,17 @@ export class BlogsController {
             id: {
               type: 'integer',
               example: 1,
-              description: 'blog\'s unique identifier',
+              description: "blog's unique identifier",
             },
             title: {
               type: 'string',
               example: 'A Dance with Dragons',
-              description: 'Blog\'s updated title',
+              description: "Blog's updated title",
             },
             slug: {
               type: 'string',
               example: 'a-dance-with-dragons-4456',
-              description: 'blog\'s unique slug',
+              description: "blog's unique slug",
             },
             image: {
               type: 'string',
@@ -551,13 +597,15 @@ export class BlogsController {
             },
             content: {
               type: 'string',
-              example: 'A Dance with Dragons is the fifth novel of seven planned in the epic fantasy series A Song of Ice and Fire by American author George R. R. Martin.',
-              description: 'Blog\'s updated content',
+              example:
+                'A Dance with Dragons is the fifth novel of seven planned in the epic fantasy series A Song of Ice and Fire by American author George R. R. Martin.',
+              description: "Blog's updated content",
             },
             category: {
               type: 'string',
               example: 'Adventure',
-              description: 'Category of the blog. Should be one of: \'General\', \'Adventure\', \'Travel\', \'Fashion\' or \'Technology\'',
+              description:
+                "Category of the blog. Should be one of: 'General', 'Adventure', 'Travel', 'Fashion' or 'Technology'",
             },
             author: {
               type: 'object',
@@ -565,39 +613,39 @@ export class BlogsController {
                 id: {
                   type: 'integer',
                   example: 1,
-                  description: 'user\'s unique identifier',
+                  description: "user's unique identifier",
                 },
                 firstName: {
                   type: 'string',
                   example: 'Bruce',
-                  description: 'user\'s given name',
+                  description: "user's given name",
                 },
                 lastName: {
                   type: 'string',
                   example: 'Wayne',
-                  description: 'user\'s family name',
+                  description: "user's family name",
                 },
                 email: {
                   type: 'string',
                   example: 'ade@test.test',
-                  description: 'user\'s unique email',
+                  description: "user's unique email",
                 },
                 createdAt: {
                   type: 'date',
                   example: '2023-11-302023-11-30 10:45:06.883885',
-                  description: 'user\'s account creation date',
+                  description: "user's account creation date",
                 },
                 updatedAt: {
                   type: 'date',
                   example: '2023-11-302023-11-30 10:45:06.883885',
-                  description: 'user\'s account latest updated date',
+                  description: "user's account latest updated date",
                 },
               },
             },
             created_at: {
               type: 'date',
               example: '2023-11-302023-11-30 10:45:06.883885',
-              description: 'blog\'s creation date',
+              description: "blog's creation date",
             },
             updated_at: {
               type: 'date',
@@ -607,12 +655,12 @@ export class BlogsController {
             published_at: {
               type: 'date',
               example: '2023-11-302023-11-30 10:45:06.883885',
-              description: 'blog\'s publish date',
+              description: "blog's publish date",
             },
             deleted_at: {
               type: 'date',
               example: '2023-11-302023-11-30 10:45:06.883885',
-              description: 'blog\'s deletion date',
+              description: "blog's deletion date",
             },
           },
         },
@@ -624,7 +672,7 @@ export class BlogsController {
   @HttpCode(200)
   async updateBlog(
     @Body() updatedBlogData: Partial<Blog>,
-    @Param('slug') slug: string
+    @Param('slug') slug: string,
   ): Promise<{ blog: Blog }> {
     const blog: Blog = await this.blogsService.update(slug, updatedBlogData);
     return { blog };
@@ -643,16 +691,14 @@ export class BlogsController {
           type: 'string',
           example: 'Blog deleted successfully',
           description: 'server message after blog deletion',
-        }
+        },
       },
     },
   })
   @UseGuards(AuthorizationGuard)
   @Delete(':slug')
   @HttpCode(200)
-  async deleteBlog(
-    @Param('slug') slug: string
-  ): Promise<{ message: string }> {
+  async deleteBlog(@Param('slug') slug: string): Promise<{ message: string }> {
     await this.blogsService.remove(slug);
     return { message: 'Blog deleted successfully' };
   }
@@ -670,22 +716,20 @@ export class BlogsController {
           type: 'string',
           example: 'Blog published successfully',
           description: 'server message after blog is published',
-        }
+        },
       },
     },
   })
   @UseGuards(AuthorizationGuard)
   @Get('publish/:slug')
   @HttpCode(200)
-  async publishBlog(
-    @Param('slug') slug: string
-  ): Promise<{ message: string }> {
-    const publishPayload: Partial<Blog> = {published_at: new Date()}
+  async publishBlog(@Param('slug') slug: string): Promise<{ message: string }> {
+    const publishPayload: Partial<Blog> = { published_at: new Date() };
     await this.blogsService.update(slug, publishPayload);
     return { message: 'Blog published successfully' };
   }
 
-  @ApiOperation({ summary: 'Get a signed upload url' })
+  @ApiOperation({ summary: 'Get a secure image upload url' })
   @ApiBearerAuth()
   @ApiTags('Blogs')
   @ApiBody({
@@ -695,14 +739,14 @@ export class BlogsController {
         content_type: {
           type: 'string',
           example: 'image/png',
-          description: 'Image mime type'
-        }
+          description: 'Image mime type',
+        },
       },
-    }
+    },
   })
   @ApiResponse({
     status: 200,
-    description: 'signed URL fetched successfully',
+    description: 'secure URL fetched successfully',
     schema: {
       type: 'object',
       properties: {
@@ -717,40 +761,41 @@ export class BlogsController {
             bucket: {
               type: 'string',
               example: 'vt-blog-development-us-east-images-public',
-              description: 's3 bucket name'
+              description: 's3 bucket name',
             },
             ['X-Amz-Algorithm']: {
               type: 'string',
               example: 'AWS4-HMAC-SHA256',
-              description: 'encryption algorithm'
+              description: 'encryption algorithm',
             },
             ['X-Amz-Credential']: {
               type: 'string',
               example: 'ABC12345676T3T5W/20240127/us-east-1/s3/aws4_request',
-              description: 'encryption algorithm'
+              description: 'encryption algorithm',
             },
             ['X-Amz-Date']: {
               type: 'string',
               example: '20240127T192303Z',
-              description: 'timestamp'
+              description: 'timestamp',
             },
             key: {
               type: 'string',
               example: 'User/Images/vt-blog-1628778-1706383383427.png',
-              description: 'File path in S3 bucket'
+              description: 'File path in S3 bucket',
             },
             policy: {
               type: 'string',
-              example: 'eyJleHBpcmF0aW9uIjoiMjAyNC0wMS0yN1QxOToyODowM1oiLCJjb25kaXRpb25zIjpE2iOiIyMDI0MDEyN1QxOTIzy5wbmcifV19',
-              description: 'encoded bucket policy'
+              example:
+                'eyJleHBpcmF0aW9uIjoiMjAyNC0wMS0yN1QxOToyODowM1oiLCJjb25kaXRpb25zIjpE2iOiIyMDI0MDEyN1QxOTIzy5wbmcifV19',
+              description: 'encoded bucket policy',
             },
             ['X-Amz-Signature']: {
               type: 'string',
               example: '1a46e9fb703aba94bbff2d29b6412df01b',
-              description: 'request signature'
+              description: 'request signature',
             },
-          }
-        }
+          },
+        },
       },
     },
   })
@@ -758,10 +803,8 @@ export class BlogsController {
   @Post('/upload_url')
   @HttpCode(200)
   async getUploadURL(
-    @Body() uploadUrlPayload: SignedUrlDto
+    @Body() uploadUrlPayload: SignedUrlDto,
   ): Promise<PresignedPost> {
     return await this.imagesService.getSignedURL(uploadUrlPayload);
   }
-
-
 }

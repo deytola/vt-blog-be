@@ -28,19 +28,8 @@ export class AuthorizationService {
     return {
       token: this.jwtService.sign({
         ...savedUser,
-        sub: savedUser.id,
       }),
       user: savedUser,
-    };
-  }
-
-  async signup(user: any): Promise<any> {
-    console.log(user);
-    return {
-      access_token: this.jwtService.sign({
-        user: user,
-        sub: 1,
-      }),
     };
   }
 }

@@ -1,8 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 import { BlogCategory } from '../entities/blog.entity';
 
-
-
 export class CreateBlogDTO {
   @IsNotEmpty()
   title: string;
@@ -16,5 +14,4 @@ export class CreateBlogDTO {
   category?: BlogCategory;
 
   authorId?: number;
-
 }

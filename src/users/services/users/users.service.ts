@@ -1,3 +1,4 @@
+import { omit } from 'lodash';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -22,11 +23,10 @@ export class UsersService {
       user.email = createUserDto.email;
       user.password = createUserDto.password;
       const savedUser = await this.userRepository.save(user);
-      const { password, ...userWithoutPassword } = savedUser;
+      const userWithoutPassword = omit(savedUser, 'password');
       return {
         token: this.jwtService.sign({
           ...userWithoutPassword,
-          sub: savedUser.id,
         }),
         user: userWithoutPassword,
       };

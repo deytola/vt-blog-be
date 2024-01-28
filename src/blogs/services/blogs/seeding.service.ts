@@ -1,22 +1,55 @@
-// seeding.service.ts
+import * as faker from 'faker';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Blog } from '../../entities/blog.entity';
-import { BLOG_SEEDS } from '../../utils/blogs.utils';
+import { Blog, BlogCategory } from '../../entities/blog.entity';
+import { User } from '../../../users/entities/user.entity';
+import { NUMBER_OF_BLOGS_TO_SEED } from '../../constants/blogs.constants';
 
 @Injectable()
 export class SeedingService {
   constructor(
     @InjectRepository(Blog)
     private readonly blogRepository: Repository<Blog>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async seedBlogs() {
-      for (const blogData of BLOG_SEEDS){
-        const blogToSeed = new Blog();
-        Object.assign(blogToSeed, blogData)
-        await this.blogRepository.save(blogToSeed);
-      }
+    const authorIds: User[] = await this.seedUsers();
+    for(let i = 0; i < NUMBER_OF_BLOGS_TO_SEED; i++){
+      const blogToSeed: Blog = new Blog();
+      Object.assign(blogToSeed, {
+        title: faker.lorem.words(3),
+        content: faker.lorem.sentences(10),
+        image: faker.image.image(500, 500, true),
+        published_at: new Date().toISOString(),
+        author: this.randomise(authorIds),
+        category: this.randomise(Object.values(BlogCategory))
+      })
+      await this.blogRepository.save(blogToSeed);
+    }
+  }
+
+  async seedUsers() {
+    const ids = []
+    for (let i = 0; i < 5; i++) {
+      const userToSeed: User = new User();
+      Object.assign(userToSeed, {
+        id: i + 1,
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        email: faker.internet.email(),
+        password: faker.internet.password()
+      })
+      const savedUser: User = await this.userRepository.save(userToSeed);
+      ids.push(savedUser.id);
+    }
+    return ids;
+  }
+
+  randomise = (options: any[]): string[] => {
+    const randomIndex: number = Math.floor(Math.random() * options.length);
+    return options[randomIndex];
   }
 }

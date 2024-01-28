@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   ManyToOne,
-  BeforeInsert
+  BeforeInsert,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { slugify } from '../utils/blogs.utils';
@@ -41,15 +41,15 @@ export class Blog extends BaseEntity {
   @Column({
     type: 'enum',
     enum: BlogCategory,
-    default: BlogCategory.GENERAL
+    default: BlogCategory.GENERAL,
   })
   category: BlogCategory;
 
-  @ManyToOne(() => User, user => user.blogs, { nullable: true })
+  @ManyToOne(() => User, (user) => user.blogs, { nullable: true })
   author: User | null;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   published_at: Date;
 

@@ -49,6 +49,6 @@ export class User extends BaseEntity {
   })
   password: string;
 
-  @OneToMany(() => Blog, blog => blog.author, { eager: false })
+  @OneToMany(() => Blog, (blog) => blog.author,{ nullable: true, eager: false })
   blogs: Blog[];
 }
