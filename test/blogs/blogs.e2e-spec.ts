@@ -17,8 +17,8 @@ describe('BlogsController (e2e)', () => {
     category = 'Adventure';
     const author: User = new User();
     author.id = 1;
-    author.firstName = faker.name.firstName();
-    author.lastName = faker.name.lastName();
+    author.firstName = faker.person.firstName();
+    author.lastName = faker.person.lastName();
     author.email = faker.internet.email();
 
     const response = await request(app.getHttpServer()).post('/blogs/').send({

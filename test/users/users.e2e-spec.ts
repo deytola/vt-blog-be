@@ -8,8 +8,8 @@ describe('UserController (e2e)', () => {
   let email: string;
   let password: string;
   it('should create a user', async () => {
-    firstName = faker.name.firstName();
-    lastName = faker.name.lastName();
+    firstName = faker.person.firstName();
+    lastName = faker.person.lastName();
     email = faker.internet.email();
     password = faker.internet.password();
     const response = await request(app.getHttpServer())

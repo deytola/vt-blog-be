@@ -17,23 +17,21 @@ A Microservice developed using [Nest](https://github.com/nestjs/nest) framework 
 - [postgreSQL](https://www.postgresql.org/)
 - [Prettier](https://prettier.io/)
 - [ESLint](https://eslint.org/)
+- [Jest](https://jestjs.io/)
 - [TypeORM](https://typeorm.io/)
 - [Swagger](https://swagger.io/)
 - [Docker](https://www.docker.com/)
 - [CircleCI](https://circleci.com/)
 - [AWS S3](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/)
 
-## Testing Tools
 
-- [Jest](https://jestjs.io/).
-
-## Installation
+## Getting started
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+## Running the server
 
 ```bash
 # development mode

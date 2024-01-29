@@ -22,6 +22,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.501.0",
     "@aws-sdk/s3-presigned-post": "^3.501.0",
+    "@faker-js/faker": "^8.4.0",
     "@hapi/joi": "^17.1.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
@@ -36,7 +37,6 @@
     "class-validator": "^0.14.0",
     "express-ip": "^1.0.4",
     "express-useragent": "^1.0.15",
-    "faker": "^5.5.3",
     "ip2location-nodejs": "^9.6.1",
     "lodash": "^4.17.21",
     "nestjs-real-ip": "^3.0.1",

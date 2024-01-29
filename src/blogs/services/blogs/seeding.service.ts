@@ -1,4 +1,4 @@
-import * as faker from 'faker';
+import { faker } from '@faker-js/faker';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -22,7 +22,7 @@ export class SeedingService {
       Object.assign(blogToSeed, {
         title: faker.lorem.words(3),
         content: faker.lorem.sentences(10),
-        image: faker.image.image(500, 500, true),
+        image: faker.image.urlLoremFlickr({width: 1000, height: 500, category: 'place'}),
         published_at: new Date().toISOString(),
         author: this.randomise(authorIds),
         category: this.randomise(Object.values(BlogCategory)),
@@ -37,8 +37,8 @@ export class SeedingService {
       const userToSeed: User = new User();
       Object.assign(userToSeed, {
         id: i + 1,
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
       });
