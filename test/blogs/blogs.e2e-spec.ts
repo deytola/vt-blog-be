@@ -1,4 +1,4 @@
-import * as faker from 'faker';
+import { faker } from '@faker-js/faker';
 import * as request from 'supertest';
 import { app } from '../setup.e2e';
 import { User } from '../../src/users/entities/user.entity';
