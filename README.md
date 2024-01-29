@@ -38,6 +38,7 @@ $ npm install
 $ npm run start:dev
 
 # production mode
+$ npm run build
 $ npm run start:prod
 ```
 
