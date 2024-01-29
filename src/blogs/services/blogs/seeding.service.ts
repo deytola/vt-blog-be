@@ -22,7 +22,11 @@ export class SeedingService {
       Object.assign(blogToSeed, {
         title: faker.lorem.words(3),
         content: faker.lorem.sentences(10),
-        image: faker.image.urlLoremFlickr({width: 1000, height: 500, category: 'place'}),
+        image: faker.image.urlLoremFlickr({
+          width: 1000,
+          height: 500,
+          category: 'place',
+        }),
         published_at: new Date().toISOString(),
         author: this.randomise(authorIds),
         category: this.randomise(Object.values(BlogCategory)),
