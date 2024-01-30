@@ -20,7 +20,7 @@ export class BlogsService {
     blog.title = createBlogDto.title;
     blog.content = createBlogDto.content;
     blog.image = createBlogDto.image;
-    blog.category = blog.category ? blog.category : BlogCategory.GENERAL;
+    blog.category = createBlogDto.category ? createBlogDto.category : BlogCategory.GENERAL;
     blog.author = await this.userRepository.findOneBy({
       id: createBlogDto.authorId,
     });
