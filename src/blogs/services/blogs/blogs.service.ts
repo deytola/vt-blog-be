@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Not, Repository } from 'typeorm';
 import { CreateBlogDTO } from '../../DTOs/createblog.dto';
-import { Blog } from '../../entities/blog.entity';
+import { Blog, BlogCategory } from '../../entities/blog.entity';
 import { User } from '../../../users/entities/user.entity';
 import { BLOG_STATUS } from '../../constants/blogs.constants';
 
@@ -20,7 +20,7 @@ export class BlogsService {
     blog.title = createBlogDto.title;
     blog.content = createBlogDto.content;
     blog.image = createBlogDto.image;
-    blog.category = createBlogDto.category;
+    blog.category = blog.category ? blog.category : BlogCategory.GENERAL;
     blog.author = await this.userRepository.findOneBy({
       id: createBlogDto.authorId,
     });

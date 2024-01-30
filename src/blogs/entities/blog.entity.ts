@@ -41,7 +41,6 @@ export class Blog extends BaseEntity {
   @Column({
     type: 'enum',
     enum: BlogCategory,
-    default: BlogCategory.GENERAL,
   })
   category: BlogCategory;
 
