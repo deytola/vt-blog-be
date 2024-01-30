@@ -48,9 +48,7 @@ export class Blog extends BaseEntity {
   @ManyToOne(() => User, (user) => user.blogs, { nullable: true })
   author: User | null;
 
-  @Column({
-    nullable: true,
-  })
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   published_at: Date;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
